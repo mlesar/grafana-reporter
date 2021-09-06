@@ -25,7 +25,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mlesar/reporter/grafana"
+	"github.com/mlesar/grafana-reporter/grafana"
 	"github.com/smartystreets/goconvey/convey"
 )
 
