@@ -1,4 +1,4 @@
-module github.com/mlesar/grafana-reporter
+module github.com/mlesar/grafana-report
 
 go 1.16
 
