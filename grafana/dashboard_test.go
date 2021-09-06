@@ -20,11 +20,11 @@ import (
 	"net/url"
 	"testing"
 
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/smartystreets/goconvey/convey"
 )
 
 func TestV4Dashboard(t *testing.T) {
-	Convey("When creating a new dashboard from Grafana v4 dashboard JSON", t, func() {
+	convey.Convey("When creating a new dashboard from Grafana v4 dashboard JSON", t, func(c convey.C) {
 		const v4DashJSON = `
 {"Dashboard":
 	{
@@ -45,39 +45,39 @@ func TestV4Dashboard(t *testing.T) {
 }`
 		dash := NewDashboard([]byte(v4DashJSON), url.Values{})
 
-		Convey("Panel Is(type) should work for all panels", func() {
-			So(dash.Panels[0].Is(Graph), ShouldBeFalse)
-			So(dash.Panels[0].Is(Text), ShouldBeFalse)
-			So(dash.Panels[0].Is(Table), ShouldBeFalse)
-			So(dash.Panels[0].Is(SingleStat), ShouldBeTrue)
-			So(dash.Panels[1].Is(Graph), ShouldBeTrue)
-			So(dash.Panels[2].Is(SingleStat), ShouldBeTrue)
+		c.Convey("Panel Is(type) should work for all panels", func(c convey.C) {
+			c.So(dash.Panels[0].Is(Graph), convey.ShouldBeFalse)
+			c.So(dash.Panels[0].Is(Text), convey.ShouldBeFalse)
+			c.So(dash.Panels[0].Is(Table), convey.ShouldBeFalse)
+			c.So(dash.Panels[0].Is(SingleStat), convey.ShouldBeTrue)
+			c.So(dash.Panels[1].Is(Graph), convey.ShouldBeTrue)
+			c.So(dash.Panels[2].Is(SingleStat), convey.ShouldBeTrue)
 		})
 
-		Convey("Row title should be parsed and santised", func() {
-			So(dash.Rows[0].Title, ShouldEqual, "RowTitle \\#")
+		c.Convey("Row title should be parsed and santised", func(c convey.C) {
+			c.So(dash.Rows[0].Title, convey.ShouldEqual, "RowTitle \\#")
 		})
 
-		Convey("Panel titles should be parsed and sanitised", func() {
-			So(dash.Panels[2].Title, ShouldEqual, "Panel3Title \\#")
+		c.Convey("Panel titles should be parsed and sanitised", func(c convey.C) {
+			c.So(dash.Panels[2].Title, convey.ShouldEqual, "Panel3Title \\#")
 		})
 
-		Convey("When accessing Panels from within Rows, titles should still be sanitised", func() {
-			So(dash.Rows[1].Panels[0].Title, ShouldEqual, "Panel3Title \\#")
+		c.Convey("When accessing Panels from within Rows, titles should still be sanitised", func(c convey.C) {
+			c.So(dash.Rows[1].Panels[0].Title, convey.ShouldEqual, "Panel3Title \\#")
 		})
 
-		Convey("Panels should contain all panels from all rows", func() {
-			So(dash.Panels, ShouldHaveLength, 3)
+		c.Convey("Panels should contain all panels from all rows", func(c convey.C) {
+			c.So(dash.Panels, convey.ShouldHaveLength, 3)
 		})
 
-		Convey("The Title should be parsed and sanitised", func() {
-			So(dash.Title, ShouldEqual, "DashTitle \\#")
+		c.Convey("The Title should be parsed and sanitised", func(c convey.C) {
+			c.So(dash.Title, convey.ShouldEqual, "DashTitle \\#")
 		})
 	})
 }
 
 func TestV5Dashboard(t *testing.T) {
-	Convey("When creating a new dashboard from Grafana v5 dashboard JSON", t, func() {
+	convey.Convey("When creating a new dashboard from Grafana v5 dashboard JSON", t, func(c convey.C) {
 		const v5DashJSON = `
 {"Dashboard":
 	{
@@ -96,44 +96,44 @@ func TestV5Dashboard(t *testing.T) {
 }`
 		dash := NewDashboard([]byte(v5DashJSON), url.Values{})
 
-		Convey("Panel Is(type) should work for all panels", func() {
-			So(dash.Panels[0].Is(SingleStat), ShouldBeTrue)
-			So(dash.Panels[1].Is(Graph), ShouldBeTrue)
-			So(dash.Panels[2].Is(SingleStat), ShouldBeTrue)
-			So(dash.Panels[3].Is(Text), ShouldBeTrue)
-			So(dash.Panels[4].Is(Table), ShouldBeTrue)
+		c.Convey("Panel Is(type) should work for all panels", func(c convey.C) {
+			c.So(dash.Panels[0].Is(SingleStat), convey.ShouldBeTrue)
+			c.So(dash.Panels[1].Is(Graph), convey.ShouldBeTrue)
+			c.So(dash.Panels[2].Is(SingleStat), convey.ShouldBeTrue)
+			c.So(dash.Panels[3].Is(Text), convey.ShouldBeTrue)
+			c.So(dash.Panels[4].Is(Table), convey.ShouldBeTrue)
 		})
 
-		Convey("Panel titles should be parsed and sanitised", func() {
-			So(dash.Panels[2].Title, ShouldEqual, "Panel3Title \\#")
+		c.Convey("Panel titles should be parsed and sanitised", func(c convey.C) {
+			c.So(dash.Panels[2].Title, convey.ShouldEqual, "Panel3Title \\#")
 		})
 
-		Convey("Panels should contain all panels that have type != row", func() {
-			So(dash.Panels, ShouldHaveLength, 5)
-			So(dash.Panels[0].Id, ShouldEqual, 0)
-			So(dash.Panels[1].Id, ShouldEqual, 1)
-			So(dash.Panels[2].Id, ShouldEqual, 2)
+		c.Convey("Panels should contain all panels that have type != row", func(c convey.C) {
+			c.So(dash.Panels, convey.ShouldHaveLength, 5)
+			c.So(dash.Panels[0].Id, convey.ShouldEqual, 0)
+			c.So(dash.Panels[1].Id, convey.ShouldEqual, 1)
+			c.So(dash.Panels[2].Id, convey.ShouldEqual, 2)
 		})
 
-		Convey("The Title should be parsed", func() {
-			So(dash.Title, ShouldEqual, "DashTitle \\#")
+		c.Convey("The Title should be parsed", func(c convey.C) {
+			c.So(dash.Title, convey.ShouldEqual, "DashTitle \\#")
 		})
 
-		Convey("Panels should contain GridPos H & W", func() {
-			So(dash.Panels[1].GridPos.H, ShouldEqual, 6)
-			So(dash.Panels[1].GridPos.W, ShouldEqual, 24)
+		c.Convey("Panels should contain GridPos H & W", func(c convey.C) {
+			c.So(dash.Panels[1].GridPos.H, convey.ShouldEqual, 6)
+			c.So(dash.Panels[1].GridPos.W, convey.ShouldEqual, 24)
 		})
 
-		Convey("Panels GridPos should allow floatt", func() {
-			So(dash.Panels[3].GridPos.H, ShouldEqual, 6.5)
-			So(dash.Panels[3].GridPos.W, ShouldEqual, 20.5)
+		c.Convey("Panels GridPos should allow floatt", func(c convey.C) {
+			c.So(dash.Panels[3].GridPos.H, convey.ShouldEqual, 6.5)
+			c.So(dash.Panels[3].GridPos.W, convey.ShouldEqual, 20.5)
 		})
 
 	})
 }
 
 func TestVariableValues(t *testing.T) {
-	Convey("When creating a dashboard and passing url varialbes in", t, func() {
+	convey.Convey("When creating a dashboard and passing url varialbes in", t, func(c convey.C) {
 		const v5DashJSON = `
 {
 	"Dashboard":
@@ -145,9 +145,9 @@ func TestVariableValues(t *testing.T) {
 		vars.Add("var-two", "twoval")
 		dash := NewDashboard([]byte(v5DashJSON), vars)
 
-		Convey("The dashboard should contain the variable values in a random order", func() {
-			So(dash.VariableValues, ShouldContainSubstring, "oneval")
-			So(dash.VariableValues, ShouldContainSubstring, "twoval")
+		c.Convey("The dashboard should contain the variable values in a random order", func(c convey.C) {
+			c.So(dash.VariableValues, convey.ShouldContainSubstring, "oneval")
+			c.So(dash.VariableValues, convey.ShouldContainSubstring, "twoval")
 		})
 	})
 }

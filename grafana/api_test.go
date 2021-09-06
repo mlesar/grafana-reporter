@@ -24,11 +24,11 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/smartystreets/goconvey/convey"
+	"github.com/smartystreets/goconvey/convey"
 )
 
 func TestGrafanaClientFetchesDashboard(t *testing.T) {
-	Convey("When fetching a Dashboard", t, func() {
+	convey.Convey("When fetching a Dashboard", t, func(c convey.C) {
 		requestURI := ""
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestURI = r.RequestURI
@@ -36,21 +36,21 @@ func TestGrafanaClientFetchesDashboard(t *testing.T) {
 		}))
 		defer ts.Close()
 
-		Convey("When using the Grafana v4 client", func() {
+		c.Convey("When using the Grafana v4 client", func(c convey.C) {
 			grf := NewV4Client(ts.URL, "", url.Values{}, true, false)
 			grf.GetDashboard("testDash")
 
-			Convey("It should use the v4 dashboards endpoint", func() {
-				So(requestURI, ShouldEqual, "/api/dashboards/db/testDash")
+			c.Convey("It should use the v4 dashboards endpoint", func(c convey.C) {
+				c.So(requestURI, convey.ShouldEqual, "/api/dashboards/db/testDash")
 			})
 		})
 
-		Convey("When using the Grafana v5 client", func() {
+		c.Convey("When using the Grafana v5 client", func(c convey.C) {
 			grf := NewV5Client(ts.URL, "", url.Values{}, true, false)
 			grf.GetDashboard("rYy7Paekz")
 
-			Convey("It should use the v5 dashboards endpoint", func() {
-				So(requestURI, ShouldEqual, "/api/dashboards/uid/rYy7Paekz")
+			c.Convey("It should use the v5 dashboards endpoint", func(c convey.C) {
+				c.So(requestURI, convey.ShouldEqual, "/api/dashboards/uid/rYy7Paekz")
 			})
 		})
 
@@ -58,7 +58,7 @@ func TestGrafanaClientFetchesDashboard(t *testing.T) {
 }
 
 func TestGrafanaClientFetchesPanelPNG(t *testing.T) {
-	Convey("When fetching a panel PNG", t, func() {
+	convey.Convey("When fetching a panel PNG", t, func(c convey.C) {
 		requestURI := ""
 		requestHeaders := http.Header{}
 
@@ -84,43 +84,43 @@ func TestGrafanaClientFetchesPanelPNG(t *testing.T) {
 			grf := cl.client
 			grf.GetPanelPng(Panel{44, "singlestat", "title", GridPos{0, 0, 0, 0}}, "testDash", TimeRange{"now-1h", "now"})
 
-			Convey(fmt.Sprintf("The %s client should use the render endpoint with the dashboard name", clientDesc), func() {
-				So(requestURI, ShouldStartWith, cl.pngEndpoint)
+			c.Convey(fmt.Sprintf("The %s client should use the render endpoint with the dashboard name", clientDesc), func(c convey.C) {
+				c.So(requestURI, convey.ShouldStartWith, cl.pngEndpoint)
 			})
 
-			Convey(fmt.Sprintf("The %s client should request the panel ID", clientDesc), func() {
-				So(requestURI, ShouldContainSubstring, "panelId=44")
+			c.Convey(fmt.Sprintf("The %s client should request the panel ID", clientDesc), func(c convey.C) {
+				c.So(requestURI, convey.ShouldContainSubstring, "panelId=44")
 			})
 
-			Convey(fmt.Sprintf("The %s client should request the time", clientDesc), func() {
-				So(requestURI, ShouldContainSubstring, "from=now-1h")
-				So(requestURI, ShouldContainSubstring, "to=now")
+			c.Convey(fmt.Sprintf("The %s client should request the time", clientDesc), func(c convey.C) {
+				c.So(requestURI, convey.ShouldContainSubstring, "from=now-1h")
+				c.So(requestURI, convey.ShouldContainSubstring, "to=now")
 			})
 
-			Convey(fmt.Sprintf("The %s client should insert auth token should in request header", clientDesc), func() {
-				So(requestHeaders.Get("Authorization"), ShouldContainSubstring, apiToken)
+			c.Convey(fmt.Sprintf("The %s client should insert auth token should in request header", clientDesc), func(c convey.C) {
+				c.So(requestHeaders.Get("Authorization"), convey.ShouldContainSubstring, apiToken)
 			})
 
-			Convey(fmt.Sprintf("The %s client should pass variables in the request parameters", clientDesc), func() {
-				So(requestURI, ShouldContainSubstring, "var-host=servername")
-				So(requestURI, ShouldContainSubstring, "var-port=adapter")
+			c.Convey(fmt.Sprintf("The %s client should pass variables in the request parameters", clientDesc), func(c convey.C) {
+				c.So(requestURI, convey.ShouldContainSubstring, "var-host=servername")
+				c.So(requestURI, convey.ShouldContainSubstring, "var-port=adapter")
 			})
 
-			Convey(fmt.Sprintf("The %s client should request singlestat panels at a smaller size", clientDesc), func() {
-				So(requestURI, ShouldContainSubstring, "width=300")
-				So(requestURI, ShouldContainSubstring, "height=150")
+			c.Convey(fmt.Sprintf("The %s client should request singlestat panels at a smaller size", clientDesc), func(c convey.C) {
+				c.So(requestURI, convey.ShouldContainSubstring, "width=300")
+				c.So(requestURI, convey.ShouldContainSubstring, "height=150")
 			})
 
-			Convey(fmt.Sprintf("The %s client should request text panels with a small height", clientDesc), func() {
+			c.Convey(fmt.Sprintf("The %s client should request text panels with a small height", clientDesc), func(c convey.C) {
 				grf.GetPanelPng(Panel{44, "text", "title", GridPos{0, 0, 0, 0}}, "testDash", TimeRange{"now", "now-1h"})
-				So(requestURI, ShouldContainSubstring, "width=1000")
-				So(requestURI, ShouldContainSubstring, "height=100")
+				c.So(requestURI, convey.ShouldContainSubstring, "width=1000")
+				c.So(requestURI, convey.ShouldContainSubstring, "height=100")
 			})
 
-			Convey(fmt.Sprintf("The %s client should request other panels in a larger size", clientDesc), func() {
+			c.Convey(fmt.Sprintf("The %s client should request other panels in a larger size", clientDesc), func(c convey.C) {
 				grf.GetPanelPng(Panel{44, "graph", "title", GridPos{0, 0, 0, 0}}, "testDash", TimeRange{"now", "now-1h"})
-				So(requestURI, ShouldContainSubstring, "width=1000")
-				So(requestURI, ShouldContainSubstring, "height=500")
+				c.So(requestURI, convey.ShouldContainSubstring, "width=1000")
+				c.So(requestURI, convey.ShouldContainSubstring, "height=500")
 			})
 		}
 
@@ -134,16 +134,16 @@ func TestGrafanaClientFetchesPanelPNG(t *testing.T) {
 		for clientDesc, cl := range casesGridLayout {
 			grf := cl.client
 
-			Convey(fmt.Sprintf("The %s client should request grid layout panels with width=1000 and height=240", clientDesc), func() {
+			c.Convey(fmt.Sprintf("The %s client should request grid layout panels with width=1000 and height=240", clientDesc), func(c convey.C) {
 				grf.GetPanelPng(Panel{44, "graph", "title", GridPos{6, 24, 0, 0}}, "testDash", TimeRange{"now", "now-1h"})
-				So(requestURI, ShouldContainSubstring, "width=960")
-				So(requestURI, ShouldContainSubstring, "height=240")
+				c.So(requestURI, convey.ShouldContainSubstring, "width=960")
+				c.So(requestURI, convey.ShouldContainSubstring, "height=240")
 			})
 
-			Convey(fmt.Sprintf("The %s client should request grid layout panels with width=480 and height=120", clientDesc), func() {
+			c.Convey(fmt.Sprintf("The %s client should request grid layout panels with width=480 and height=120", clientDesc), func(c convey.C) {
 				grf.GetPanelPng(Panel{44, "graph", "title", GridPos{3, 12, 0, 0}}, "testDash", TimeRange{"now", "now-1h"})
-				So(requestURI, ShouldContainSubstring, "width=480")
-				So(requestURI, ShouldContainSubstring, "height=120")
+				c.So(requestURI, convey.ShouldContainSubstring, "width=480")
+				c.So(requestURI, convey.ShouldContainSubstring, "height=120")
 			})
 		}
 
@@ -155,7 +155,7 @@ func init() {
 }
 
 func TestGrafanaClientFetchPanelPNGErrorHandling(t *testing.T) {
-	Convey("When trying to fetching a panel from the server sometimes returns an error", t, func() {
+	convey.Convey("When trying to fetching a panel from the server sometimes returns an error", t, func(c convey.C) {
 		try := 0
 
 		//create a server that will return error on the first call
@@ -171,12 +171,12 @@ func TestGrafanaClientFetchPanelPNGErrorHandling(t *testing.T) {
 
 		_, err := grf.GetPanelPng(Panel{44, "singlestat", "title", GridPos{0, 0, 0, 0}}, "testDash", TimeRange{"now-1h", "now"})
 
-		Convey("It should retry a couple of times if it receives errors", func() {
-			So(err, ShouldBeNil)
+		c.Convey("It should retry a couple of times if it receives errors", func(c convey.C) {
+			c.So(err, convey.ShouldBeNil)
 		})
 	})
 
-	Convey("When trying to fetching a panel from the server consistently returns an error", t, func() {
+	convey.Convey("When trying to fetching a panel from the server consistently returns an error", t, func(c convey.C) {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}))
@@ -186,8 +186,8 @@ func TestGrafanaClientFetchPanelPNGErrorHandling(t *testing.T) {
 
 		_, err := grf.GetPanelPng(Panel{44, "singlestat", "title", GridPos{0, 0, 0, 0}}, "testDash", TimeRange{"now-1h", "now"})
 
-		Convey("The Grafana API should return an error", func() {
-			So(err, ShouldNotBeNil)
+		c.Convey("The Grafana API should return an error", func(c convey.C) {
+			c.So(err, convey.ShouldNotBeNil)
 		})
 	})
 }
